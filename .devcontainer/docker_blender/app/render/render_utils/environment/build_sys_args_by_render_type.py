@@ -2,13 +2,13 @@ import sys
 import os
 import shlex
 
-aws_batch_job_index = int(os.environ['AWS_BATCH_JOB_ARRAY_INDEX'])
-aws_batch_array_size = int(os.environ['AWS_BATCH_JOB_ARRAY_SIZE'])
+aws_batch_job_index = int(os.environ.get('AWS_BATCH_JOB_ARRAY_INDEX', 0))
+aws_batch_array_size = int(os.environ.get('AWS_BATCH_JOB_ARRAY_SIZE', 1))
 output_path = os.environ['EFS_BLENDER_OUTPUT_FOLDER_PATH']
 
-
+    
 def calculate_active_frame(aws_batch_job_index, start_frame, frame_step):
-    if aws_batch_job_index == 0:
+    if aws_batch_job_index is None or aws_batch_job_index == 0:
         return start_frame 
     else:
         return start_frame + (aws_batch_job_index * frame_step)
