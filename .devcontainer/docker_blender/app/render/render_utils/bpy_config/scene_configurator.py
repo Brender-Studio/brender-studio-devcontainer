@@ -69,4 +69,4 @@ def configure_compositor_nodes():
             print(f"Render file path for node {index}: {file_output_node.base_path}")
             
             for slot_index, file_slot in enumerate(file_output_node.file_slots):
-                file_slot.path = f"output_slot_{index}_{slot_index}_#####"
+                file_slot.path = f"output_slot_{slot_index}_#####"
