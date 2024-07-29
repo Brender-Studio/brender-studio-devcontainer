@@ -12,7 +12,6 @@ if version >= (4, 2, 0):
 
 from storage_actions.job_3.animation_ops.animation_parser import create_parser
 
-
 def main():
     print("bpy script playblast")
     parser = create_parser()
@@ -20,10 +19,7 @@ def main():
     argv = sys.argv
     argv = argv[argv.index("--") + 1:]
 
-    # print("argv:", argv)
-
     bpy.app.driver_namespace['argv'] = argv
-    
 
     args: Namespace = parser.parse_args(bpy.app.driver_namespace['argv'])
 
@@ -42,13 +38,13 @@ def main():
 
     scene.render.fps = args.fps
     scene.render.image_settings.file_format = 'FFMPEG'
-    scene.render.ffmpeg.format = 'MPEG4' # 'MPEG4'
+    scene.render.ffmpeg.format = 'MPEG4'
     scene.render.ffmpeg.codec = video_codec
     scene.render.ffmpeg.constant_rate_factor = output_quality
     scene.render.ffmpeg.ffmpeg_preset = encoding_speed
     scene.render.ffmpeg.use_autosplit = autosplit
 
-    # color management
+    # Configuración de la gestión del color
     scene.view_settings.view_transform = 'Standard'
     scene.view_settings.look = 'None'
 
@@ -57,22 +53,37 @@ def main():
     playblast_path = args.efs_project_path
     print("Playblast path:", playblast_path)
 
-    # Load images in the sequence editor
+    # Crear el editor de secuencias si no existe
     seq = bpy.context.scene.sequence_editor_create()
-    images = sorted([f for f in os.listdir(output_folder) if f.endswith(('.png', '.jpg', '.jpeg', '.exr', '.tif', '.tiff', '.bmp', '.tga', '.cin', '.dpx', '.hdr', '.webp'))])
 
+    # Buscar imágenes en todas las subcarpetas
+    image_extensions = ('.png', '.jpg', '.jpeg', '.exr', '.tif', '.tiff', '.bmp', '.tga', '.cin', '.dpx', '.hdr', '.webp')
+    images = []
+
+    for root, _, files in os.walk(output_folder):
+        # Excluir directorios que contengan "compositor" en cualquier parte del nombre del directorio
+        if any('compositor' in part.lower() for part in root.split(os.path.sep)):
+            continue  # Si se encuentra "compositor", omite este directorio
+        for file in files:
+            if file.lower().endswith(image_extensions):
+                images.append(os.path.join(root, file))
+
+    # Ordenar imágenes para asegurar que se cargan en el orden correcto
+    images.sort()
+
+    # Agregar las imágenes a la secuencia de video
     for index, image in enumerate(images):
-        filepath = os.path.join(output_folder, image)
-        seq_strip = seq.sequences.new_image(name=image, filepath=filepath, channel=1, frame_start=index+1)
+        seq.sequences.new_image(name=os.path.basename(image), filepath=image, channel=1, frame_start=index+1)
 
+    # Configuración del rango de fotogramas
     scene.frame_start = 1
     scene.frame_end = len(images)
-    
-    # Output file name
+
+    # Ruta de salida del archivo de video
     output_filepath = os.path.join(playblast_path, 'bs_playblast_')
     bpy.context.scene.render.filepath = output_filepath
 
-    # Render the animation
+    # Renderizar la animación
     bpy.ops.render.render(animation=True, write_still=True)
 
 if __name__ == "__main__":

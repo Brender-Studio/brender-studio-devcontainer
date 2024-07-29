@@ -54,8 +54,8 @@ ENV AWS_BATCH_JOB_ARRAY_INDEX=0
 ENV AWS_BATCH_JOB_ARRAY_SIZE=2
 ENV AWS_BATCH_JOB_ID=1234
 
-ENV BUCKET_NAME=brender-bucket-s3-<uuid>
-ENV BUCKET_KEY=PY_SINGLE_POTTERY
+ENV BUCKET_NAME=brender-bucket-s3-7a6c6be6-97c1-4be8-bcba-0c7587f958f1
+ENV BUCKET_KEY=MULTILAYER_2
 
 # AWS CREDENTIALS
 ENV AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
@@ -67,8 +67,8 @@ ENV AWS_DEFAULT_REGION=us-east-1
 
 # EFS ENV
 ENV EFS_BLENDER_FOLDER_PATH=/mnt/efs/projects
-ENV EFS_BLENDER_OUTPUT_FOLDER_PATH=/mnt/efs/projects/PY_SINGLE_POTTERY/output
-ENV EFS_BLENDER_FILE_PATH=/mnt/efs/projects/PY_SINGLE_POTTERY/pottery-animation.blend
+ENV EFS_BLENDER_OUTPUT_FOLDER_PATH=/mnt/efs/projects/MULTILAYER_2/output
+ENV EFS_BLENDER_FILE_PATH=/mnt/efs/projects/MULTILAYER_2/multi_scene_layers.blend
 
 # PYTHON TESTING - Main Script Path
 
@@ -76,7 +76,7 @@ ENV EFS_BLENDER_FILE_PATH=/mnt/efs/projects/PY_SINGLE_POTTERY/pottery-animation.
 # ENV EFS_MAIN_SCRIPT_PATH=/mnt/efs/projects/PY_FOLDER_POTTERY/python_brender_test/user_script.py
 
 ## File
-ENV EFS_MAIN_SCRIPT_PATH=/mnt/efs/projects/PY_SINGLE_POTTERY/user_script.py
+ENV EFS_MAIN_SCRIPT_PATH=/mnt/efs/projects/MULTILAYER/user_script.py
 
 
 ENV USE_EEVEE=False
@@ -85,7 +85,7 @@ ENV USE_EEVEE=False
 ENV BLENDER_EXECUTABLE=/usr/bin/blender
 
 # Job Action type (copy_efs, render, custom_render_python, upload_render_output, remove_efs)
-ENV JOB_ACTION_TYPE=custom_render_python
+ENV JOB_ACTION_TYPE=render
 
 
 # Copy specific folders and their contents
