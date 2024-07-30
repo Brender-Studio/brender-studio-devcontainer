@@ -47,7 +47,7 @@ RUN curl "${BLENDER_URL}" -o "blender.tar.xz" && \
     rm -rf blender.tar.xz && \
     rm -rf blender
 
-RUN pip3 install boto3 requests Wand
+RUN pip3 install boto3 requests Wand Pillow
 
 # AWS BATCH TEST ENV
 ENV AWS_BATCH_JOB_ARRAY_INDEX=0
