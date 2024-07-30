@@ -35,22 +35,6 @@ def set_output_settings(output_color_depth, output_color_mode, output_compressio
     bpy.context.scene.render.image_settings.compression = output_compression
     bpy.context.scene.render.image_settings.file_format = output_format
 
-# def configure_compositor_nodes():
-    
-#     compositor_context = bpy.context.scene.node_tree
-#     print(compositor_context)
-
-#     if compositor_context:
-#         file_output_nodes = [node for node in compositor_context.nodes if node.bl_idname == "CompositorNodeOutputFile"]
-
-#         for index, file_output_node in enumerate(file_output_nodes):
-#             file_output_node.base_path = os.path.join(output_path, "")
-#             print(f"Render file path: {file_output_node.base_path}")
-#             for slot_index, file_slot in enumerate(file_output_node.file_slots):
-#                 file_slot.path = ""
-#                 prefix = f"compositor/FO_{index}_S_{slot_index}_#####"
-#                 file_slot.path += f"{prefix}"
-
 def configure_compositor_nodes():
     bpy.context.scene.use_nodes = True
     bpy.context.scene.render.use_compositing = True
@@ -60,7 +44,9 @@ def configure_compositor_nodes():
         file_output_nodes = [node for node in compositor_context.nodes if node.bl_idname == "CompositorNodeOutputFile"]
 
         for index, file_output_node in enumerate(file_output_nodes):
-            node_output_path = os.path.join(output_path, f"compositor_output_{index}")
+            # node_output_path = os.path.join(output_path, f"{output_path}/compositor_output_{index}/")
+            node_output_path = f"{output_path}/compositor_output_{index}/"
+
             if not os.path.exists(node_output_path):
                 os.makedirs(node_output_path)
                 print(f"Created output directory for node {index}: {node_output_path}")
@@ -70,3 +56,4 @@ def configure_compositor_nodes():
             
             for slot_index, file_slot in enumerate(file_output_node.file_slots):
                 file_slot.path = f"output_slot_{slot_index}_#####"
+
