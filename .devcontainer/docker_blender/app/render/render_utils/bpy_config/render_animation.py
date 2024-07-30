@@ -33,34 +33,32 @@ def render_animation(start_frame, end_frame, frame_step):
         bpy.context.scene.render.filepath = render_file_path
         bpy.ops.render.render(write_still=True)
 
+
 def render_animation_without_compositor(scene_name, layer_name, start_frame, end_frame, frame_step):
-    # Asegúrate de que estamos usando la escena correcta
+    start_frame, end_frame, frame_step = calculate_frame_chunk(array_size, job_index, start_frame, end_frame, frame_step)
+
     if scene_name in bpy.data.scenes:
         scene = bpy.data.scenes[scene_name]
         bpy.context.window.scene = scene
     else:
-        print(f"Error: La escena '{scene_name}' no existe.")
+        print(f"Error: Scene '{scene_name}' not found.")
         return
 
-    # Desactiva todas las capas excepto la que queremos renderizar
     for layer in scene.view_layers:
         layer.use = (layer.name == layer_name)
 
-    # Configura el nodo Render Layers para usar la capa específica
     scene.use_nodes = True
     render_layer_node = scene.node_tree.nodes.get("Render Layers")
     if render_layer_node:
         render_layer_node.layer = layer_name
     else:
-        print("Error: No se encontró el nodo Render Layers en el árbol de nodos.")
+        print("Error: Render Layer node not found.")
         return
 
-    # Configura la ruta de salida para la animación
     base_output_path = os.path.join(output_path, f"{layer_name}")
     if not os.path.exists(base_output_path):
         os.makedirs(base_output_path)
 
-    # Renderiza cada fotograma dentro del rango especificado
     for frame in range(int(start_frame), int(end_frame) + 1, int(frame_step)):
         scene.frame_set(frame)
         render_file_path = os.path.join(base_output_path, f"{frame:05d}")

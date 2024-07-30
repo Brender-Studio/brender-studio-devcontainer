@@ -44,7 +44,7 @@ def main():
     scene.render.ffmpeg.ffmpeg_preset = encoding_speed
     scene.render.ffmpeg.use_autosplit = autosplit
 
-    # Configuración de la gestión del color
+    # Color management settings
     scene.view_settings.view_transform = 'Standard'
     scene.view_settings.look = 'None'
 
@@ -53,37 +53,35 @@ def main():
     playblast_path = args.efs_project_path
     print("Playblast path:", playblast_path)
 
-    # Crear el editor de secuencias si no existe
+    # create a new video sequence
     seq = bpy.context.scene.sequence_editor_create()
 
-    # Buscar imágenes en todas las subcarpetas
+    # Find all images in the output folder
     image_extensions = ('.png', '.jpg', '.jpeg', '.exr', '.tif', '.tiff', '.bmp', '.tga', '.cin', '.dpx', '.hdr', '.webp')
     images = []
 
     for root, _, files in os.walk(output_folder):
-        # Excluir directorios que contengan "compositor" en cualquier parte del nombre del directorio
+        # Exclude images from the compositor directory
         if any('compositor' in part.lower() for part in root.split(os.path.sep)):
-            continue  # Si se encuentra "compositor", omite este directorio
+            continue  # Skip the current directory
         for file in files:
             if file.lower().endswith(image_extensions):
                 images.append(os.path.join(root, file))
 
-    # Ordenar imágenes para asegurar que se cargan en el orden correcto
+    # Sort the images by name
     images.sort()
 
-    # Agregar las imágenes a la secuencia de video
+    # Add images to the video sequence
     for index, image in enumerate(images):
         seq.sequences.new_image(name=os.path.basename(image), filepath=image, channel=1, frame_start=index+1)
 
-    # Configuración del rango de fotogramas
+    # Set the start and end frames
     scene.frame_start = 1
     scene.frame_end = len(images)
 
-    # Ruta de salida del archivo de video
     output_filepath = os.path.join(playblast_path, 'bs_playblast_')
     bpy.context.scene.render.filepath = output_filepath
 
-    # Renderizar la animación
     bpy.ops.render.render(animation=True, write_still=True)
 
 if __name__ == "__main__":
