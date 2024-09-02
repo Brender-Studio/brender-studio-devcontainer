@@ -3,6 +3,8 @@ import boto3
 from botocore.exceptions import ClientError
 from botocore.client import Config
 import boto3.session
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 bucket_name = os.environ.get('BUCKET_NAME')
 bucket_key = os.environ.get('BUCKET_KEY')
@@ -17,7 +19,9 @@ def generate_presigned_urls(region):
             aws_access_key_id=access_key_id,
             aws_secret_access_key=secret_access_key)
 
-        s3_client = session.client('s3', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key, config=Config(signature_version='s3v4'))
+        s3_client = session.client('s3', 
+                                   endpoint_url=f"https://s3.{region}.amazonaws.com",
+                                   aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key, config=Config(signature_version='s3v4'))
 
         # Generate presigned url for thumbnail
         thumbnail_presigned_url = s3_client.generate_presigned_url(
